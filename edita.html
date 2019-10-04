@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EDITA</title>
+    <style>
+    form{
+      display: none;
+    }
+    
+    
+    </style>
+  </head>
+
+  <body>
+    <h1>EDITA</h1>
+    
+    <form action="" method="post" name="formm" id="formulario" >
+      <input type="hidden" name="id">
+      <p><label for="nome">Nome: </label><input type="text" name="nome" id="nome"></p>
+      <p><label for="descricao">Descricao: </label><input type="text" name="descricao" id="descricao"></p>
+      <p><button type="button" id='atualizar' name='atualizar' value="atualizar" onclick="atualizarDados()"> Cadastrar </button>  </p>       
+    </form>
+ 
+    <section id="listagem">
+
+
+
+    </section>
+    
+    <button type="button"> <a href="./index.html"> Voltar </a> </button> 
+  </body>
+
+  <script>
+    function carrega(){
+      // function lista
+      //event.preventDefault();
+      //const dadoPes = document.getElementById("pesquisa").value;
+        fetch(`./listar.php`,{
+          method: 'get',
+          mode:'cors'
+        })
+          .then(response => response.json()) 
+          .then(function result (data){
+              console.log(data);
+              data.forEach((item)=>{
+                document.getElementById("listagem").innerHTML += `<p>Nome: ${item.nome} <br> Descrição: ${item.descricao}<br> 
+                  <button onclick="CarregaDados('${item.nome}',${item.id},'${item.descricao}')">Editar</button></p>`;
+              });
+          })
+          .catch(err =>   document.getElementById("listagem").innerHTML = `Não Existe Aniamis Cadastrados`);
+    }
+    
+    function CarregaDados (nome,id,descri){
+      formm.nome.value= nome; 
+      formm.descricao.value= descri;
+      formm.id.value = id;
+      document.getElementById("formulario").style.display = "block";
+    }
+    window.onload = carrega();
+
+
+    function atualizarDados (){
+      const nome = formm.nome.value; 
+      const descri = formm.descricao.value;
+      const id = formm.id.value;
+      //console.log(`id: ${id} Descr: ${descri} Nome: ${nome}`);
+      document.getElementById("formulario").style.display = "none";
+      var obj = {ID:id,NOME:nome,DESCRI:descri};
+      console.log(obj);
+      fetch('./edita.php',{
+          method: 'put',
+          body: JSON.stringify(obj)// converte para JSON o JSON.stringify // body apenas quando quero fazer um post
+        }).then((response)=> { return response.text()
+        }).then( data => {
+            const result = JSON.parse(data);
+            console.log(`Data STATUS = ${result.ret}`);
+            if(result.ret){
+              document.getElementById("listagem").innerHTML = "";
+              carrega();
+              alert("Dados Inseridos Com Sucesso");
+            }else{
+              alert("Dados Não Editado !");
+           }
+
+          
+      });
+    }
+
+    
+
+
+
+
+  
+  
+  
+  </script>
+</html>

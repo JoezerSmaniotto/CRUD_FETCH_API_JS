@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>INSERE</title>
+    <style>
+      body{
+        font-size: 1.2em;
+      }
+      
+      div{
+        margin-top: 30px; 
+      }
+
+      a{
+        text-decoration: none;
+      }
+    </style>
+
+  </head>
+  
+  <body>
+    <h1>Insere</h1>
+    <section>
+        <p><label for="nome">Nome: </label><input type="text" name="nome" id="nome"></p>
+        <p><label for="descricao">Descricao: </label><input type="text" name="descricao" id="descricao"></p>
+        <p><button type="submit" id='cadastrar' name='cadastrar' value="Cadastrar" onclick="cadastrar()"> Cadastrar </button>  </p>      
+        <button type="button"> <a href="index.html"> Voltar </a> </button>  
+    </section>    
+
+
+
+  </body>
+
+<script>
+    
+    function gerarObjetoUsuario(){
+      const nome = ObterValor('nome');
+      const descricao = ObterValor('descricao');
+      return { // Cria o objeto 
+        nome,descricao
+      }
+
+    }
+  
+    function ObterValor(id){
+      const campo = document.getElementById(id);
+      if(campo === null){
+        return ''; // retorna uma string em branco
+      }else {
+        return campo.value;
+      }
+    }
+    
+    function cadastrar(){
+
+      const dadosUsuario = gerarObjetoUsuario();
+      
+      if( formularioValido(dadosUsuario)){
+        fetch('insere.php',{
+          method: 'post',
+          body: JSON.stringify(dadosUsuario)// converte para JSON o JSON.stringify // body apenas quando quero fazer um post
+        /*}).then((response)=> {
+            console.log(response.text());
+            alert("Dados Inseridos Com Sucesso");
+        });*/
+        }).then((response)=> { return response.text()
+        }).then( data => {
+            const result = JSON.parse(data);
+            console.log(`Data STATUS = ${result.ret}`);
+            if(result.ret){
+              alert("Dados Inseridos Com Sucesso");
+            }else{
+              alert("Dados Não Inserido !");
+            }   
+        });      
+          
+      }else{
+        alert("Verifique os Campos, Existe  Campos Não Preenchidos");
+      }
+    }
+
+    function formularioValido(dadosUsuario){
+      let campoVazio = false; 
+      const arrayDadosUser = Object.values(dadosUsuario);
+      arrayDadosUser.forEach(cont=>{
+        if(cont === ''){
+           campoVazio = true;
+        }
+      });
+
+      return !campoVazio;  
+    }
+
+  
+  
+  
+  </script>   
+  
+  
+   
+  
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pesquisa</title>
+    <style>
+    a{
+      
+      background-color: yellow;
+      margin-top: 300px;
+      text-decoration: none;
+    }
+    
+    </style>
+  </head>
+  <body>
+  
+  <h1>Pesquisa</h1>
+
+  Pesquisa Por Nome: 
+  
+  <form name="formulario" onsubmit="pesquisar()" method="post">
+      <input type="text" name="" id="pesquisa">
+      <button type="submit">Pesquisar</button>
+  </form>
+  
+  <div id="Result">
+  
+  </div >
+
+  <a href="./index.html">Voltar</a>
+
+  </body>
+
+  <script>
+
+    //const result  = document.querySelectorAll(".Result");
+    //console.log(result);
+    function pesquisar(){
+      document.getElementById("Result").innerHTML = "";
+      event.preventDefault();
+      const dadoPes = document.getElementById("pesquisa").value;
+        fetch(`./pesquisa.php?dado=${dadoPes}`,{
+          method: 'get',
+          mode:'cors'
+
+          //body: JSON.stringify(dadoPes)// converte para JSON o JSON.stringify // body apenas quando quero fazer um post
+        })
+          .then(response => response.json()) 
+          .then( data => {
+              //if(response[response.length -1]){
+                console.log(data);
+                data.map(data => {
+                    document.getElementById("Result").innerHTML += `Nome: ${data.nome} <br> Descrição: ${data.descricao} <br> <hr>`;
+                })
+              //}
+          })
+          .catch(err =>   document.getElementById("Result").innerHTML = `Animal Não Existe`);
+
+    }
+
+    
+  </script>
+
+
+  
+</html>

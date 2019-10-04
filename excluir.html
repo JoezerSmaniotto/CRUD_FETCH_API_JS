@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EXCLUIR</title>
+    <style>
+      body{
+        font-size: 1.2em;
+      }
+      
+      div{
+        margin-top: 30px; 
+      }
+
+      a{
+       
+        background-color: yellow;
+        margin-top: 300px;
+        text-decoration: none;
+      }
+    </style>
+
+  </head>
+  
+  <body>
+    <h1>EXCLUIR</h1>
+    
+    <section id="listagem">
+    
+    
+
+    </section>
+   
+    <a href="./index.html">Voltar</a>  
+
+  </body>
+
+  <script>
+    
+    function carrega(){
+      // function lista
+      //event.preventDefault();
+      //const dadoPes = document.getElementById("pesquisa").value;
+        fetch(`./listar.php`,{
+          method: 'get',
+          mode:'cors'
+
+          //body: JSON.stringify(dadoPes)// converte para JSON o JSON.stringify // body apenas quando quero fazer um post
+        })
+          .then(response => response.json()) 
+          .then(function result (data){
+              console.log(data);
+
+              data.forEach((item)=>{
+                document.getElementById("listagem").innerHTML += `<p>Nome: ${item.nome} <br> Descrição: ${item.descricao}<br> 
+                  <button onclick="excluir(${item.id})">EXCLUIR</button></p>`;
+              });
+              /*data.map(data => {
+                  document.getElementById("listagem").innerHTML = `Nome: ${data.nome} <br> Descrição: ${data.descricao}`;
+              })*/
+          })
+          .catch(err =>   document.getElementById("listagem").innerHTML = `Não Existe Aniamis Cadastrados`);
+    }
+
+    window.onload = carrega();
+
+    function excluir(idi){
+      if(window.confirm("Você Relamente deseja Excluir ??")){
+        var obj = {id:idi};
+        fetch('excluir.php',{
+            method: 'delete',
+            body: JSON.stringify(obj)// converte para JSON o JSON.stringify // body apenas quando quero fazer um post
+        }).then((response)=> {return response.json() 
+        }).then( data=> {
+              //console.log(response.json());
+              console.log(data);
+              if(data.status){
+                console.log(`data = ${data}`);
+                alert("Dado Excluido");
+              }else {
+                console.log(`data = ${data}`);
+                alert("Dado Não Excluido"); 
+              }          
+              // ver logica pode ficar dentro do if   
+              document.getElementById("listagem").innerHTML = ""; // Limpa o que tinha escrito na LISTAG
+              carrega();
+                      
+        });
+      }
+    }
+
+  
+  </script>   
+  
+   
+  
+</html>
